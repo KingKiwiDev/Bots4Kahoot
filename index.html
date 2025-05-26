@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bots4Kahoot</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Bots4Kahoot</h1>
+    <form id="botForm">
+        <label for="pin">Game PIN:</label>
+        <input type="text" id="pin" name="pin" required maxlength="8" pattern="\d+"><br>
+        <label for="name">Bot Name:</label>
+        <input type="text" id="name" name="name" required maxlength="16"><br>
+        <label for="bots">Number of Bots:</label>
+        <input type="number" id="bots" name="bots" required min="1" max="200" value="10"><br>
+        <button type="submit">Start</button>
+    </form>
+    <pre id="output"></pre>
+    <script>
+        document.getElementById('botForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const pin = document.getElementById('pin').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const bots = document.getElementById('bots').value.trim();
+            const output = document.getElementById('output');
+            output.textContent = "Starting bots...";
+            try {
+                const res = await fetch('/start-bots', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin, name, bots })
+                });
+                const data = await res.json();
+                output.textContent = data.message || "Bots started!";
+            } catch (err) {
+                output.textContent = "Error: " + err.message;
+            }
+        });
+    </script>
+</body>
+</html>
